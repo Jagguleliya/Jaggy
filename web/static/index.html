@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JAGY AI Desktop Studio v2.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: '#07080c',
+            card: '#0e111a',
+            cardHover: '#141824',
+            border: '#1b2030',
+            primary: '#6366f1',
+            accent: '#06b6d4',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="/static/favicon.png">
+  <style>
+    body { background-color: #07080c; color: #f1f5f9; font-family: 'Inter', sans-serif; overflow: hidden; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #1b2030; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2b334a; }
+    
+    .glow-indigo { box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.35); }
+    .glow-cyan { box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35); }
+    
+    .chat-bubble { max-width: 88%; padding: 0.75rem 1rem; border-radius: 0.75rem; margin-bottom: 0.75rem; font-size: 0.8125rem; line-height: 1.5; }
+    .chat-bubble.user { background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.2)); border: 1px solid rgba(99, 102, 241, 0.4); margin-left: auto; color: #e0e7ff; }
+    .chat-bubble.bot { background-color: #0e111a; border: 1px solid #1b2030; margin-right: auto; color: #f1f5f9; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.active { display: flex; }
+  </style>
+</head>
+<body class="flex flex-col h-screen w-screen">
+
+  <!-- Top Navigation Header -->
+  <header class="h-14 border-b border-border bg-[#090b12] px-5 flex items-center justify-between shrink-0 select-none z-20">
+    <div class="flex items-center space-x-3">
+      <img src="/static/icon.png" alt="JAGY" class="w-8 h-8 rounded-lg object-contain p-1 bg-slate-900/80 border border-border glow-indigo">
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="font-extrabold text-sm tracking-tight text-white flex items-center gap-1.5">
+            <span>JAGY AI Studio</span>
+          </h1>
+          <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">v2.0 Pro</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Status Indicators -->
+    <div class="flex items-center space-x-3 text-xs">
+      <div id="yt-badge" class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-card border border-border">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-emerald-300 font-medium text-[11px]" id="yt-badge-text">YouTube Connected</span>
+      </div>
+
+      <div class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-card border border-border">
+        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+        <span class="text-cyan-300 font-medium text-[11px]">AI Model: NVIDIA / Gemini</span>
+      </div>
+
+      <div class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-card border border-border">
+        <span class="text-slate-400 text-[11px]">Today:</span>
+        <span id="stat-posts" class="font-bold text-white text-[11px]">0 / 3 Uploads</span>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Actions -->
+    <div class="flex items-center space-x-2 text-xs">
+      <button onclick="openModal('learning-modal')" class="px-3 py-1.5 rounded-lg bg-card hover:bg-cardHover border border-border text-slate-300 transition flex items-center gap-1.5">
+        <i class="fa-solid fa-brain text-cyan-400"></i>
+        <span>Self-Learning</span>
+      </button>
+
+      <button onclick="openModal('security-modal')" class="px-3 py-1.5 rounded-lg bg-card hover:bg-cardHover border border-border text-slate-300 transition flex items-center gap-1.5">
+        <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+        <span>Security & Privacy</span>
+      </button>
+
+      <button onclick="openModal('settings-modal')" class="px-3 py-1.5 rounded-lg bg-card hover:bg-cardHover border border-border text-slate-300 transition flex items-center gap-1.5">
+        <i class="fa-solid fa-gear text-indigo-400"></i>
+        <span>Settings</span>
+      </button>
+
+      <button onclick="triggerClipPipeline()" id="btn-clip-now" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-500 via-cyan-500 to-emerald-500 hover:opacity-90 font-bold text-white text-xs glow-indigo transition flex items-center gap-1.5">
+        <i class="fa-solid fa-bolt"></i>
+        <span>Auto-Clip & Post</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Split Workspace (Matches Drawing) -->
+  <main class="flex-1 grid grid-cols-12 gap-3 p-3 min-h-0 overflow-hidden">
+
+    <!-- Column 1: "Code running" (Live Terminal Logs Stream) -->
+    <section class="col-span-3 flex flex-col bg-card border border-border rounded-xl overflow-hidden shadow-2xl">
+      <div class="h-9 px-3 border-b border-border bg-[#090b12] flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-green-500/80"></span>
+          <span class="text-xs font-mono font-semibold text-slate-300 ml-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-terminal text-[10px] text-cyan-400"></i>
+            Code Running
+          </span>
+        </div>
+        <div class="flex items-center space-x-1.5">
+          <button onclick="toggleLogPause()" id="btn-pause-log" class="text-[10px] px-2 py-0.5 rounded bg-bg border border-border text-slate-400 hover:text-white transition">Pause</button>
+          <button onclick="clearConsoleLogs()" class="text-[10px] px-2 py-0.5 rounded bg-bg border border-border text-slate-400 hover:text-white transition">Clear</button>
+        </div>
+      </div>
+
+      <div id="terminal-stream" class="flex-1 p-3 font-mono text-[11px] leading-relaxed overflow-y-auto space-y-1 bg-[#06070a]">
+        <div class="text-slate-500">[00:00:00] [SYSTEM] JAGY Engine initialized. Waiting for pipeline execution...</div>
+      </div>
+    </section>
+
+    <!-- Column 2: "Bot — User — Bot" (Hermes AI Chat) -->
+    <section class="col-span-5 flex flex-col bg-card border border-border rounded-xl overflow-hidden shadow-2xl">
+      <div class="h-9 px-4 border-b border-border bg-[#090b12] flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-2">
+          <div class="w-5 h-5 rounded-md bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-500/30">
+            🤖
+          </div>
+          <div>
+            <h2 class="text-xs font-bold text-white flex items-center gap-2">
+              Hermes AI Copilot
+              <span id="active-ai-model" class="text-[10px] text-cyan-400 font-normal">● Ready (NVIDIA / Gemini)</span>
+            </h2>
+          </div>
+        </div>
+        <button onclick="clearChatHistory()" class="text-[10px] px-2 py-0.5 rounded bg-bg border border-border text-slate-400 hover:text-white transition">
+          Clear Chat
+        </button>
+      </div>
+
+      <!-- Chat Messages Scroll Area -->
+      <div id="chat-stream" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 bg-[#090b12]">
+        <div class="chat-bubble bot">
+          <p>Hey creator! 👋 I am <strong>Hermes</strong>, your autonomous JAGY copilot. I talk with you naturally in any language. Tell me what channels to clip (e.g. <em>"Clip @IShowSpeed and upload at 6 PM"</em>), adjust your settings, or ask anything!</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Prompts Bar -->
+      <div class="px-3 py-1.5 border-t border-border bg-[#0a0d16] flex flex-wrap gap-1.5 shrink-0">
+        <button onclick="sendQuickPrompt('Clip channel @IShowSpeed and create 3 viral shorts')" class="text-[10px] px-2.5 py-1 rounded-md bg-card hover:bg-cardHover border border-border text-slate-300 transition">
+          🎯 Clip @IShowSpeed
+        </button>
+        <button onclick="sendQuickPrompt('Set upload schedule to 2 times a day at 10 AM and 6 PM')" class="text-[10px] px-2.5 py-1 rounded-md bg-card hover:bg-cardHover border border-border text-slate-300 transition">
+          ⏰ Post at 10 AM & 6 PM
+        </button>
+        <button onclick="sendQuickPrompt('Give me ideas for captions and hashtags for today\'s Short')" class="text-[10px] px-2.5 py-1 rounded-md bg-card hover:bg-cardHover border border-border text-slate-300 transition">
+          💡 Caption Ideas
+        </button>
+      </div>
+
+      <!-- "Type message" Input Bar -->
+      <div class="p-2.5 border-t border-border bg-[#090b12] flex items-center space-x-2 shrink-0">
+        <input type="text" id="chat-input" onkeydown="if(event.key==='Enter') submitChatMessage()" placeholder="Type message to Hermes (any language)..." class="flex-1 bg-[#06070a] border border-border rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+        <button onclick="submitChatMessage()" class="w-8 h-8 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center text-xs transition">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Column 3: "Short video" + "Caption Description" + "Which channel" (Right Stack) -->
+    <section class="col-span-4 flex flex-col space-y-3 min-h-0 overflow-hidden">
+
+      <!-- Sub-Card 1: "Short video" (9:16 Video Player Preview) -->
+      <div class="bg-card border border-border rounded-xl p-3 flex flex-col items-center shrink-0">
+        <div class="w-full flex items-center justify-between mb-2 text-xs">
+          <span class="font-bold text-slate-200 flex items-center gap-1.5 text-[11px]">
+            <i class="fa-solid fa-clapperboard text-indigo-400"></i>
+            Short Video Preview
+          </span>
+          <span id="player-title" class="text-slate-400 font-mono text-[10px] truncate max-w-[150px]">No video loaded</span>
+        </div>
+
+        <div class="relative w-[150px] h-[266px] bg-black rounded-lg overflow-hidden border border-border shadow-2xl flex items-center justify-center">
+          <video id="short-player" class="w-full h-full object-cover" controls preload="metadata">
+            <source src="" type="video/mp4">
+          </video>
+          <div id="player-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-600 text-xs p-3 text-center">
+            <i class="fa-solid fa-play text-2xl mb-1 text-slate-700"></i>
+            <span>Ready for preview</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-Card 2: "Caption / Description" (Gemini AI Ideation) -->
+      <div class="flex-1 bg-card border border-border rounded-xl p-3 flex flex-col overflow-hidden min-h-0">
+        <div class="flex items-center justify-between mb-2 shrink-0">
+          <span class="font-bold text-slate-200 flex items-center gap-1.5 text-[11px]">
+            <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i>
+            Caption & Description Ideas
+          </span>
+          <button onclick="generateCaptionIdeas()" id="btn-gen-ideas" class="text-[10px] px-2 py-0.5 rounded bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600/50 transition">
+            ✨ Generate
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto space-y-2 text-[11px] pr-1">
+          <!-- Hook Caption -->
+          <div>
+            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Hook Caption:</span>
+            <div id="idea-hook" class="p-2 rounded bg-bg border border-border font-medium text-amber-300 mt-0.5 leading-snug">
+              "Wait for what happens in the next 3 seconds... 💀"
+            </div>
+          </div>
+
+          <!-- Suggested Titles -->
+          <div>
+            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">High CTR Titles:</span>
+            <div id="idea-titles" class="space-y-1 mt-0.5">
+              <div class="p-1.5 rounded bg-bg border border-border text-slate-200 cursor-pointer hover:border-indigo-500 transition" onclick="copyText(this)">
+                HE ACTUALLY DID THIS?! 😱 #Shorts
+              </div>
+            </div>
+          </div>
+
+          <!-- Description Box -->
+          <div>
+            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">YouTube Description:</span>
+            <textarea id="idea-desc" rows="3" class="w-full bg-bg border border-border rounded p-2 text-[11px] text-slate-300 mt-0.5 focus:outline-none focus:border-cyan-500 leading-snug font-mono">Watch until the end! Transformative viral Short.
+
+Subscribe for daily clips.
+#Shorts #Viral #Trending</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-Card 3: "Which channel" (Target Channels Pool) -->
+      <div class="bg-card border border-border rounded-xl p-3 shrink-0">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-slate-200 flex items-center gap-1.5 text-[11px]">
+            <i class="fa-brands fa-youtube text-red-500"></i>
+            Which Channel (Target Pool)
+          </span>
+          <span class="text-[10px] text-slate-400" id="channel-count">6 Active</span>
+        </div>
+
+        <div class="flex gap-1.5 mb-2">
+          <input type="text" id="target-channel-input" placeholder="Add handle (e.g. @MrBeast)..." class="flex-1 bg-bg border border-border rounded px-2.5 py-1 text-xs text-slate-200 font-mono focus:outline-none focus:border-cyan-500">
+          <button onclick="addNewChannel()" class="px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition">
+            Add
+          </button>
+        </div>
+
+        <div id="channels-pill-list" class="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Modal 1: Settings Modal -->
+  <div id="settings-modal" class="modal-overlay">
+    <div class="bg-card border border-border rounded-2xl w-[580px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="p-4 border-b border-border bg-[#090b12] flex items-center justify-between">
+        <h3 class="font-bold text-sm text-white flex items-center gap-2">
+          <i class="fa-solid fa-gear text-indigo-400"></i>
+          Settings Configuration
+        </h3>
+        <button onclick="closeModal('settings-modal')" class="text-slate-400 hover:text-white text-lg">&times;</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 text-xs">
+        <!-- NVIDIA API Key (For talking) -->
+        <div class="p-3.5 rounded-xl bg-bg border border-border">
+          <label class="block font-bold text-slate-200 mb-1 flex items-center justify-between">
+            <span><i class="fa-solid fa-microchip text-green-400 mr-1.5"></i> NVIDIA NIM API Key (For Talking)</span>
+            <span class="text-[10px] text-emerald-400">Ultra-fast Llama-3.1</span>
+          </label>
+          <div class="flex gap-2 mt-1.5">
+            <input type="password" id="input-nvidia-key" placeholder="nvapi-..." class="flex-1 bg-[#0c0e17] border border-border rounded-lg px-3 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-green-500">
+            <button onclick="saveNvidiaKey()" class="px-3 py-1.5 rounded-lg bg-green-600 hover:bg-green-500 text-white font-semibold transition">Save Key</button>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1.5">If set, Hermes AI uses your NVIDIA NIM API key for ultra-fast conversational talking!</p>
+        </div>
+
+        <!-- Video Processing -->
+        <div class="p-3.5 rounded-xl bg-bg border border-border space-y-2.5">
+          <h4 class="font-bold text-slate-200">Video & Crop Options</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-slate-400 block text-[11px] mb-1">Resolution</label>
+              <select id="cfg-resolution" class="w-full bg-[#0c0e17] border border-border rounded-lg p-2 text-slate-200">
+                <option value="1080p">1080x1920 (Vertical 9:16 FHD)</option>
+                <option value="720p">720x1280 (HD)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-slate-400 block text-[11px] mb-1">Subtitles Style</label>
+              <select id="cfg-subtitles" class="w-full bg-[#0c0e17] border border-border rounded-lg p-2 text-slate-200">
+                <option value="hormozi">Alex Hormozi (Kinetic Yellow)</option>
+                <option value="mrbeast">MrBeast (Dynamic Green)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload Defaults -->
+        <div class="p-3.5 rounded-xl bg-bg border border-border space-y-2.5">
+          <h4 class="font-bold text-slate-200">Upload & Scheduling</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-slate-400 block text-[11px] mb-1">Privacy Status</label>
+              <select id="cfg-privacy" class="w-full bg-[#0c0e17] border border-border rounded-lg p-2 text-slate-200">
+                <option value="public">Public (Immediate Feed)</option>
+                <option value="unlisted">Unlisted</option>
+                <option value="private">Private</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-slate-400 block text-[11px] mb-1">Daily Upload Times</label>
+              <input type="text" id="cfg-upload-times" value="10:00, 18:00" class="w-full bg-[#0c0e17] border border-border rounded-lg p-2 text-slate-200 font-mono">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3.5 border-t border-border bg-[#090b12] flex justify-end">
+        <button onclick="saveAllSettings()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-white text-xs transition">
+          Save All Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Security & Privacy Modal -->
+  <div id="security-modal" class="modal-overlay">
+    <div class="bg-card border border-border rounded-2xl w-[580px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="p-4 border-b border-border bg-[#090b12] flex items-center justify-between">
+        <h3 class="font-bold text-sm text-white flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+          Security, Permissions & Local Privacy
+        </h3>
+        <button onclick="closeModal('security-modal')" class="text-slate-400 hover:text-white text-lg">&times;</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 text-xs">
+        <!-- Guarantees -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <div class="p-3 rounded-xl bg-bg border border-border text-center">
+            <i class="fa-solid fa-lock text-emerald-400 text-lg mb-1"></i>
+            <div class="font-bold text-[11px]">100% Local</div>
+            <p class="text-[9px] text-slate-400 mt-0.5">Tokens stored on PC</p>
+          </div>
+          <div class="p-3 rounded-xl bg-bg border border-border text-center">
+            <i class="fa-solid fa-ban text-cyan-400 text-lg mb-1"></i>
+            <div class="font-bold text-[11px]">Zero Telemetry</div>
+            <p class="text-[9px] text-slate-400 mt-0.5">No tracking or analytics</p>
+          </div>
+          <div class="p-3 rounded-xl bg-bg border border-border text-center">
+            <i class="fa-solid fa-scale-balanced text-indigo-400 text-lg mb-1"></i>
+            <div class="font-bold text-[11px]">MIT Open Source</div>
+            <p class="text-[9px] text-slate-400 mt-0.5">You own your clips</p>
+          </div>
+        </div>
+
+        <!-- Connected Accounts -->
+        <div class="p-3.5 rounded-xl bg-bg border border-border">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-brands fa-youtube text-red-500 text-2xl"></i>
+              <div>
+                <div class="font-bold text-slate-200">YouTube Channel OAuth</div>
+                <p class="text-[10px] text-slate-400">Stored locally in config/token.json</p>
+              </div>
+            </div>
+            <button onclick="revokeYouTubeOAuth()" class="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 transition text-xs font-semibold">
+              Revoke Access
+            </button>
+          </div>
+        </div>
+
+        <!-- Data Storage Paths -->
+        <div class="p-3.5 rounded-xl bg-bg border border-border space-y-1.5 font-mono text-[10px]">
+          <div class="font-sans font-bold text-slate-200 text-xs mb-1">Local Storage Folders:</div>
+          <div class="text-slate-400">Output Shorts: <span class="text-indigo-400">output/</span></div>
+          <div class="text-slate-400">Clip Cache: <span class="text-indigo-400">data/clip_cache/</span></div>
+          <div class="text-slate-400">Logs & Performance: <span class="text-indigo-400">data/performance_log.json</span></div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="p-3.5 rounded-xl bg-rose-950/20 border border-rose-800/40 flex items-center justify-between">
+          <div>
+            <div class="font-bold text-rose-300">Clean Local Cache</div>
+            <p class="text-[10px] text-slate-400">Deletes temporary video segments and cache files.</p>
+          </div>
+          <button onclick="clearCacheAction()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs transition">
+            Clear Cache
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Self-Improvement & Analytics Modal -->
+  <div id="learning-modal" class="modal-overlay">
+    <div class="bg-card border border-border rounded-2xl w-[560px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="p-4 border-b border-border bg-[#090b12] flex items-center justify-between">
+        <h3 class="font-bold text-sm text-white flex items-center gap-2">
+          <i class="fa-solid fa-brain text-cyan-400"></i>
+          Autonomous Self-Learning & Algorithm Feedback
+        </h3>
+        <button onclick="closeModal('learning-modal')" class="text-slate-400 hover:text-white text-lg">&times;</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 text-xs">
+        <div class="p-4 rounded-xl bg-gradient-to-r from-indigo-900/30 to-cyan-900/30 border border-indigo-500/30">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-300 font-semibold">Algorithm Retention Score</span>
+            <span id="learn-score" class="text-lg font-bold text-cyan-400">92.4 / 100</span>
+          </div>
+          <div class="w-full h-2 bg-slate-800 rounded-full mt-2 overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 w-[92%]"></div>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-2">
+            JAGY automatically diagnoses every upload's retention curve and adjusts future cuts, hooks, and subtitle colors to optimize Average Percentage Viewed (APV)!
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-bg border border-border space-y-2">
+          <h4 class="font-bold text-slate-200 text-xs">Recent Self-Adjustments:</h4>
+          <ul class="space-y-1.5 text-slate-400 text-[11px]" id="learning-adjustments-list">
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 text-xs"></i> Pacing accelerated to 2.1 cuts/sec on initial 5s hook</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 text-xs"></i> High-visibility yellow/cyan Hormozi karaoke subtitles locked</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 text-xs"></i> Question pinned in comments to drive debate and view loops</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Engine -->
+  <script>
+    let chatHistory = [];
+    let logPolling = true;
+
+    // Modal helpers
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    // API Call helper
+    async function apiRequest(method, url, data = null) {
+      try {
+        const opts = { method, headers: { 'Content-Type': 'application/json' }};
+        if (data) opts.body = JSON.stringify(data);
+        const res = await fetch(url, opts);
+        return await res.json();
+      } catch (err) {
+        console.error("API error:", err);
+        return null;
+      }
+    }
+
+    // ==================== 1. Live Terminal Logs ("Code Running") ====================
+    async function fetchConsoleLogs() {
+      if (!logPolling) return;
+      const logs = await apiRequest('GET', '/api/logs');
+      if (!logs || !logs.length) return;
+
+      const container = document.getElementById('terminal-stream');
+      container.innerHTML = logs.map(l => {
+        let col = 'text-slate-400';
+        if (l.level === 'ERROR') col = 'text-rose-400 font-semibold';
+        else if (l.level === 'WARNING') col = 'text-amber-300';
+        else if (l.level === 'INFO') col = 'text-slate-200';
+        return `<div class="${col}"><span class="text-slate-600">[${l.timestamp}]</span> <span class="text-cyan-400">[${(l.node || 'SYSTEM').toUpperCase()}]</span> ${escapeHtml(l.message)}</div>`;
+      }).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function toggleLogPause() {
+      logPolling = !logPolling;
+      document.getElementById('btn-pause-log').innerText = logPolling ? 'Pause' : 'Resume';
+    }
+
+    function clearConsoleLogs() {
+      document.getElementById('terminal-stream').innerHTML = '<div class="text-slate-600">[Console cleared]</div>';
+    }
+
+    // ==================== 2. Bot ↔ User Chat ("Hermes AI") ====================
+    async function submitChatMessage() {
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+      appendBubble('user', msg);
+      chatHistory.push({ role: 'user', content: msg });
+
+      // Typing placeholder
+      const tempId = 'typing-' + Date.now();
+      const stream = document.getElementById('chat-stream');
+      const tempDiv = document.createElement('div');
+      tempDiv.id = tempId;
+      tempDiv.className = 'chat-bubble bot';
+      tempDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5 text-cyan-400"></i> Hermes is thinking...';
+      stream.appendChild(tempDiv);
+      stream.scrollTop = stream.scrollHeight;
+
+      const res = await apiRequest('POST', '/api/agent/chat', { message: msg, history: chatHistory });
+      const el = document.getElementById(tempId);
+      if (el) el.remove();
+
+      const reply = (res && res.reply) ? res.reply : "Hermes is reconnecting to Gemini. Please try again in a second.";
+      appendBubble('bot', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+      if (res && res.model) {
+        document.getElementById('active-ai-model').innerText = `● Active: ${res.model}`;
+      }
+    }
+
+    function sendQuickPrompt(promptText) {
+      document.getElementById('chat-input').value = promptText;
+      submitChatMessage();
+    }
+
+    function appendBubble(role, text) {
+      const stream = document.getElementById('chat-stream');
+      const div = document.createElement('div');
+      div.className = `chat-bubble ${role}`;
+      div.innerHTML = `<p>${formatMarkdown(text)}</p>`;
+      stream.appendChild(div);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function clearChatHistory() {
+      chatHistory = [];
+      document.getElementById('chat-stream').innerHTML = '<div class="chat-bubble bot"><p>Chat cleared. Ask Hermes anything!</p></div>';
+    }
+
+    // ==================== 3. Caption / Description Ideas (Gemini) ====================
+    async function generateCaptionIdeas() {
+      const btn = document.getElementById('btn-gen-ideas');
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Ideas...';
+      btn.disabled = true;
+
+      const ch = document.getElementById('target-channel-input').value || "@IShowSpeed";
+      const res = await apiRequest('POST', '/api/generate/caption-description', { channel: ch, topic: "Viral Moments" });
+      
+      btn.innerHTML = '✨ Generate';
+      btn.disabled = false;
+
+      if (res && res.data) {
+        const d = res.data;
+        if (d.hook_caption) document.getElementById('idea-hook').innerText = `"${d.hook_caption}"`;
+        if (d.description) document.getElementById('idea-desc').value = d.description;
+        if (d.titles && d.titles.length) {
+          document.getElementById('idea-titles').innerHTML = d.titles.map(t => 
+            `<div class="p-1.5 rounded bg-bg border border-border text-slate-200 cursor-pointer hover:border-indigo-500 transition" onclick="copyText(this)">${escapeHtml(t)}</div>`
+          ).join('');
+        }
+      }
+    }
+
+    function copyText(el) {
+      navigator.clipboard.writeText(el.innerText);
+      const orig = el.innerText;
+      el.innerText = "✓ Copied to clipboard!";
+      setTimeout(() => el.innerText = orig, 1200);
+    }
+
+    // ==================== 4. Target Channels Pool ("Which channel") ====================
+    async function loadChannels() {
+      const res = await apiRequest('GET', '/api/settings/channels');
+      const list = document.getElementById('channels-pill-list');
+      if (!res || !res.channels || !res.channels.length) {
+        list.innerHTML = '<span class="text-slate-500 text-[11px]">No channels in pool</span>';
+        return;
+      }
+      document.getElementById('channel-count').innerText = `${res.channels.length} Active`;
+      list.innerHTML = res.channels.map(ch => `
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#121624] border border-border text-[11px] text-slate-300">
+          ${escapeHtml(ch)}
+          <button onclick="removeChannel('${ch}')" class="text-slate-500 hover:text-rose-400 ml-1 text-[10px]">&times;</button>
+        </span>
+      `).join('');
+    }
+
+    async function addNewChannel() {
+      const input = document.getElementById('target-channel-input');
+      const val = input.value.trim();
+      if (!val) return;
+      await apiRequest('POST', '/api/settings/channels/add', { channel: val });
+      input.value = '';
+      loadChannels();
+    }
+
+    async function removeChannel(ch) {
+      await apiRequest('POST', '/api/settings/channels/remove', { channel: ch });
+      loadChannels();
+    }
+
+    // ==================== 5. Video Player Preview ("Short video") ====================
+    async function loadVideos() {
+      const vids = await apiRequest('GET', '/api/videos');
+      if (vids && vids.length > 0) {
+        const first = vids[0];
+        const player = document.getElementById('short-player');
+        const ph = document.getElementById('player-placeholder');
+        ph.style.display = 'none';
+        player.src = first.url;
+        document.getElementById('player-title').innerText = first.filename;
+      }
+    }
+
+    // ==================== 6. Pipeline Actions & Status ====================
+    async function triggerClipPipeline() {
+      const btn = document.getElementById('btn-clip-now');
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Clipping...';
+      btn.disabled = true;
+
+      await apiRequest('POST', '/api/run', { dry_run: false, mode: 'channel_clipping', force: true });
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Auto-Clip & Post';
+        btn.disabled = false;
+      }, 3000);
+    }
+
+    async function fetchSystemStatus() {
+      const s = await apiRequest('GET', '/api/status');
+      if (s) {
+        document.getElementById('stat-posts').innerText = `${s.today_uploads || 0} / 3 Uploads`;
+        const yt = document.getElementById('yt-badge-text');
+        if (s.youtube_authenticated) {
+          yt.innerText = 'YouTube Connected';
+          yt.parentElement.className = 'flex items-center space-x-2 px-3 py-1 rounded-lg bg-card border border-border text-emerald-300';
+        } else {
+          yt.innerText = 'YouTube OAuth Standby';
+          yt.parentElement.className = 'flex items-center space-x-2 px-3 py-1 rounded-lg bg-card border border-border text-amber-300';
+        }
+      }
+    }
+
+    // ==================== 7. Settings & Key Management ====================
+    async function saveNvidiaKey() {
+      const key = document.getElementById('input-nvidia-key').value.trim();
+      if (!key) return;
+      const res = await apiRequest('POST', '/api/settings/nvidia-key', { api_key: key });
+      alert(res.message || "NVIDIA NIM API key updated!");
+    }
+
+    async function saveAllSettings() {
+      const times = document.getElementById('cfg-upload-times').value.split(',').map(s => s.trim());
+      await apiRequest('POST', '/api/settings/schedule', { times: times, mode: 'fixed_times' });
+      await apiRequest('POST', '/api/settings/video', { data: {
+        resolution: document.getElementById('cfg-resolution').value,
+        subtitles_style: document.getElementById('cfg-subtitles').value
+      }});
+      await apiRequest('POST', '/api/settings/platforms', { data: {
+        privacy_status: document.getElementById('cfg-privacy').value
+      }});
+      alert("Settings saved successfully!");
+      closeModal('settings-modal');
+    }
+
+    async function revokeYouTubeOAuth() {
+      if (confirm("Revoke YouTube OAuth? You will need to re-authenticate.")) {
+        await apiRequest('POST', '/api/security/revoke-youtube');
+        alert("YouTube access revoked.");
+        fetchSystemStatus();
+      }
+    }
+
+    async function clearCacheAction() {
+      await apiRequest('POST', '/api/security/clear-cache');
+      alert("Local cache cleared!");
+    }
+
+    // Helper utilities
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function formatMarkdown(str) {
+      return escapeHtml(str)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code class="bg-[#121624] px-1 rounded text-cyan-300">$1</code>')
+        .replace(/\n/g, '<br>');
+    }
+
+    // Bootstrapping
+    fetchSystemStatus();
+    loadChannels();
+    loadVideos();
+    setInterval(fetchConsoleLogs, 2500);
+    setInterval(fetchSystemStatus, 6000);
+  </script>
+</body>
+</html>

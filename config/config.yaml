@@ -1,0 +1,181 @@
+# ============================================
+# YouTube Shorts Bot — Configuration
+# ============================================
+
+# --- Content Settings ---
+content:
+  mode: "channel_clipping"   # "channel_clipping" (viral clips from YouTube channels) or "story_universe"
+  language: "en"          # "en" for English (higher RPM)
+  upload_frequency: 2     # Uploads per day
+
+# --- Automated Channel Clipping Settings ---
+clipping:
+  enabled: true
+  custom_channels: []        # Target channels specified by user (e.g. ["@IShowSpeed", "@LexFridman"])
+  default_viral_pool:        # Auto-fallback viral pool if user enters no channel
+    - "@IShowSpeed"
+    - "@MrBeast"
+    - "@joerogan"
+    - "@lexfridman"
+    - "@HubermanLab"
+    - "@TheoVon"
+  min_seconds: 25
+  max_seconds: 55
+
+# --- Custom Scheduling (User Configured Upload Times) ---
+schedule:
+  mode: "fixed_times"        # "fixed_times" (posts at exact user hours) or "interval"
+  upload_times:
+    - "10:00"                # e.g. 10:00 AM
+    - "18:00"                # e.g. 06:00 PM
+  cooldown_hours: 3.5
+  topics:
+    - "unbelievable moments"
+    - "crazy skills & stunts"
+    - "satisfying engineering"
+    - "unexpected plot twists"
+    - "mind-blowing real life"
+    - "amazing inventions"
+
+# --- Platform Settings ---
+platforms:
+  youtube:
+    enabled: true
+    client_secrets: "config/credentials.json"
+    token_file: "config/token.json"
+    default_category_id: "24"    # 24 = Entertainment (Viral Shorts Feed)
+    privacy_status: "public"
+    made_for_kids: false
+  
+  x_twitter:
+    enabled: true
+    # Free tier: 1,500 posts/month (no Premium, no monetization)
+    api_key: "YOUR_X_API_KEY"
+    api_secret: "YOUR_X_API_SECRET"
+    access_token: "YOUR_ACCESS_TOKEN"
+    access_token_secret: "YOUR_ACCESS_TOKEN_SECRET"
+  
+  facebook:
+    enabled: true
+    page_id: "YOUR_PAGE_ID"
+    access_token: "YOUR_FB_ACCESS_TOKEN"
+
+# --- API Keys (OPTIONAL — JAGY ships with built-in keys!) ---
+# You do NOT need to provide any API keys to use JAGY.
+# Built-in keys are bundled with the app and work automatically.
+# Only override below if you want to use your own keys for higher rate limits.
+api_keys:
+  # gemini: ""          # Leave empty = uses built-in key (free tier). Get your own at: aistudio.google.com
+  # pexels: ""          # Leave empty = uses built-in key. Get your own at: pexels.com/api
+  # nvidia: ""          # Optional: NVIDIA NIM API key (nvapi-...) for talking model
+  reddit_client_id: ""
+  reddit_client_secret: ""
+  reddit_user_agent: "jagy-bot/2.0"
+  # elevenlabs: ""      # Optional: only needed for premium TTS voices
+
+# --- TTS Settings ---
+tts:
+  engine: "edge-tts"        # 100% Free & Unlimited Forever (Zero API credits needed)
+  voice_mode: "tournament"  # A/B test voices across uploads to find which gets the most views!
+  tournament_voices:
+    - name: "Eric"
+      voice: "en-US-EricNeural"
+      rate: "+3%"
+      pitch: "-1Hz"
+      style_desc: "Youthful, energetic, high retention"
+    - name: "Christopher"
+      voice: "en-US-ChristopherNeural"
+      rate: "+0%"
+      pitch: "+0Hz"
+      style_desc: "Engaging, authentic documentary style"
+    - name: "Andrew"
+      voice: "en-US-AndrewNeural"
+      rate: "-1%"
+      pitch: "-2Hz"
+      style_desc: "Casual, easygoing, closest match to Pablo Marshal"
+    - name: "Brian"
+      voice: "en-US-BrianMultilingualNeural"
+      rate: "+7%"
+      pitch: "-2Hz"
+      style_desc: "Deep, cinematic, legendary viral TikTok & Shorts narrator"
+  min_samples_to_lock: 8
+  locked_winner: "Brian"         # Locked in: Deep, dramatic, cinematic voice!
+
+# --- User Clips (your 2 recorded clips) ---
+user_clips:
+  clip_1: "user_clips/clip_1_desk.mp4"      # Hand at desk
+  clip_2: "user_clips/clip_2_reaction.mp4"  # Hand gestures
+  insert_points:
+    - position: "intro"     # First 3 seconds
+      duration: 3
+    - position: "midpoint"  # At the key moment
+      duration: 3
+    - position: "outro"     # Last 5 seconds
+      duration: 4
+
+# --- Music Settings ---
+music:
+  directory: "data/music"
+  volume_reduction: 0.15   # Music volume relative to voice (15%)
+  fade_in_seconds: 1.0
+  fade_out_seconds: 2.0
+  moods:
+    - "upbeat"
+    - "mysterious"
+    - "dramatic"
+    - "chill"
+    - "inspiring"
+
+# --- Engagement Bot ---
+engagement:
+  auto_reply: true
+  max_replies_per_day: 12         # Safe limit
+  max_external_comments_per_day: 3
+  pin_first_comment: true
+  heart_comments: true
+  heart_limit: 15
+  community_post_frequency: "weekly"
+
+# --- Analytics & Self-Improvement ---
+analytics:
+  check_interval_hours: 72        # Check analytics every 3 days
+  min_data_age_hours: 48          # Wait 48h for YouTube data to settle
+  scoring_weights:
+    retention: 0.50
+    view_velocity: 0.30
+    engagement_rate: 0.20
+  weekly_report: true
+
+# --- Video Styles ---
+styles:
+  - name: "dark_glow"
+    bg_color: "#0a0a0a"
+    text_color: "#ffffff"
+    accent_color: "#00d4ff"
+    font: "Montserrat-Bold"
+  - name: "bright_clean"
+    bg_color: "#f5f5f5"
+    text_color: "#1a1a1a"
+    accent_color: "#ff6b35"
+    font: "Inter-Bold"
+  - name: "gradient_purple"
+    bg_color: "gradient"
+    gradient_start: "#667eea"
+    gradient_end: "#764ba2"
+    text_color: "#ffffff"
+    font: "Poppins-Bold"
+  - name: "neon_green"
+    bg_color: "#0d1117"
+    text_color: "#ffffff"
+    accent_color: "#39ff14"
+    font: "Outfit-Bold"
+
+# --- Paths ---
+paths:
+  output_dir: "output"
+  clip_cache: "data/clip_cache"
+  fonts_dir: "templates/fonts"
+  performance_log: "data/performance_log.json"
+  used_topics: "data/used_topics.json"
+  engagement_log: "data/engagement_log.json"
+  style_scores: "data/style_scores.json"

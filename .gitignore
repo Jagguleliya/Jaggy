@@ -1,0 +1,55 @@
+# Python Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Build & Dist artifacts
+build/
+dist/
+*.spec
+
+# Large Release Bundles & Binary Installers (Must be hosted in GitHub Releases due to 100MB Git limit)
+*.zip
+site/assets/*.zip
+JAGY.exe
+dist/JAGY.exe
+
+# Video Outputs & Cache
+output/
+user_clips/
+data/clip_cache/
+data/temp_clips/
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.wav
+*.mp3
+
+# Security & Private Credentials (NEVER commit tokens to public repo)
+config/token.json
+config/credentials.json
+
+# Logs & PIDs
+*.log
+logs/
+data/daemon.pid
+data/performance_log.json
+data/engagement_log.json
+data/used_topics.json
+data/style_scores.json
+
+# IDE / Editor configs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

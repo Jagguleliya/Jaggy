@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JAGY — AI YouTube Channel Slicer & Multi-Platform Syndicator</title>
+  <meta name="description" content="Turn any YouTube channel into high-retention Shorts on autopilot. AI finds viral moments, crops to 9:16 vertical, adds animated subtitles, and syndicates to YouTube, Instagram, X, and Reddit.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Modular Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+
+  <!-- External 3D Library (Three.js) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <!-- Three.js 3D Background Canvas -->
+  <canvas id="three-bg"></canvas>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-wrapper">
+      <a href="#" class="brand-logo" style="display: flex; align-items: center; gap: 10px;">
+        <img src="assets/icon.png" alt="Jagy" style="width: 32px; height: 32px; object-fit: contain;">
+        <span class="logo-text" style="font-weight: 800; font-size: 20px; letter-spacing: -0.5px;">Jaggy</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+        <li><a href="#features" class="nav-link">Features</a></li>
+        <li><a href="#install" class="nav-link">Desktop App</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="btn btn-secondary" onclick="window.hermesChat.toggleModal(true)">
+          <span>🤖 Hermes Copilot</span>
+        </button>
+        <a href="assets/jagy-desktop-v2.0.zip" download="jagy-desktop-v2.0.zip" class="btn btn-primary btn-glow">
+          <span>Download for Windows</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-pill">
+        <span class="pulse-indicator"></span>
+        <span>Version 2.0 Live · Powered by Gemini & Hermes AI</span>
+      </div>
+
+      <h1 class="hero-title">
+        Turn any YouTube channel into <br>
+        <span class="gradient-text">viral 9:16 Shorts</span> on autopilot.
+      </h1>
+
+      <p class="hero-subtitle">
+        JAGY monitors target channels, identifies dopamine-heavy moments with AI, smart-crops 
+        to vertical 1080p, adds animated subtitles, and publishes everywhere while you sleep.
+      </p>
+
+      <div class="hero-actions">
+        <a href="assets/jagy-desktop-v2.0.zip" download="jagy-desktop-v2.0.zip" class="btn btn-primary btn-glow" style="padding: 14px 34px; font-size: 15px;">
+          <span>Download Free Desktop App</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </a>
+        <button class="btn btn-secondary" onclick="window.hermesChat.toggleModal(true)" style="padding: 14px 28px; font-size: 15px;">
+          <span>💬 Talk to Hermes AI</span>
+        </button>
+      </div>
+
+      <!-- Live Interactive Channel Clipper Simulator -->
+      <div class="simulator-box" id="how-it-works">
+        <div class="simulator-header">
+          <div class="sim-dots">
+            <span class="sim-dot"></span>
+            <span class="sim-dot"></span>
+            <span class="sim-dot"></span>
+          </div>
+          <span class="sim-tag">JAGY NEURAL PIPELINE SIMULATOR</span>
+        </div>
+
+        <div class="simulator-input-wrap">
+          <input type="text" id="sim-input" class="sim-input" placeholder="Enter target channel (e.g. @HubermanLab, @LexFridman, @MrBeast)..." value="@HubermanLab">
+          <button id="sim-btn" class="sim-btn">
+            <span>Analyze & Clip</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+        </div>
+
+        <div class="sim-preview-grid">
+          <div class="sim-card active">
+            <div class="sim-card-num">Stage 01</div>
+            <div class="sim-card-title">Channel Ingestion</div>
+            <div class="sim-card-status">Scrapes latest 4K videos via local yt-dlp stream.</div>
+            <div class="sim-progress-bar"><div class="sim-progress-fill"></div></div>
+          </div>
+          <div class="sim-card">
+            <div class="sim-card-num">Stage 02</div>
+            <div class="sim-card-title">AI Hook Detection</div>
+            <div class="sim-card-status">Gemini AI detects peak viral retention curves.</div>
+            <div class="sim-progress-bar"><div class="sim-progress-fill" style="width: 20%;"></div></div>
+          </div>
+          <div class="sim-card">
+            <div class="sim-card-num">Stage 03</div>
+            <div class="sim-card-title">Auto-Edit & Publish</div>
+            <div class="sim-card-status">9:16 crop, Hormozi subs, multi-network push.</div>
+            <div class="sim-progress-bar"><div class="sim-progress-fill" style="width: 10%;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platforms Bar -->
+  <section class="platforms-section">
+    <div class="container">
+      <div class="platforms-lead">One-Click Syndication Across All Video Networks</div>
+      <div class="platforms-list">
+        <div class="platform-pill">
+          <svg viewBox="0 0 24 24" fill="#ef4444"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <span>YouTube Shorts (1080p)</span>
+        </div>
+        <div class="platform-pill">
+          <svg viewBox="0 0 24 24" fill="#ec4899"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          <span>Instagram Reels</span>
+        </div>
+        <div class="platform-pill">
+          <svg viewBox="0 0 24 24" fill="#00D4FF"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <span>X / Twitter</span>
+        </div>
+        <div class="platform-pill">
+          <svg viewBox="0 0 24 24" fill="#ff4500"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.702z"/></svg>
+          <span>Reddit Videos</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bento Grid Features Section -->
+  <section class="bento-section" id="features">
+    <div class="container">
+      <div class="section-head">
+        <span class="badge-tag tag-cyan">Engine Architecture</span>
+        <h2 class="section-title">Built for maximum engagement & virality</h2>
+        <p class="section-desc">Every layer is tuned to capture viewer attention in the first 2 seconds and retain high completion rates.</p>
+      </div>
+
+      <div class="bento-grid">
+        <!-- Feature 1: Viral Moment Detection (8 cols) -->
+        <div class="bento-card col-8">
+          <div class="bento-icon" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">🧠</div>
+          <h3>Gemini AI Viral Moment Extraction</h3>
+          <p>
+            Unlike dumb interval splitters, JAGY parses video transcripts and emotional audio cues to pinpoint high-hook 
+            sections (25s–55s) with tension, sudden reveals, and cliffhangers.
+          </p>
+          <div class="mock-visual">
+            <div class="mock-timeline">
+              <span class="mock-cut-tag">VIRAL HOOK DETECTED (04:12 - 04:51)</span>
+              <div class="mock-bar"></div>
+              <div class="mock-bar"></div>
+              <div class="mock-bar viral"></div>
+              <div class="mock-bar viral"></div>
+              <div class="mock-bar"></div>
+              <div class="mock-bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 2: Hormozi Subtitles (4 cols) -->
+        <div class="bento-card col-4">
+          <div class="bento-icon" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">⚡</div>
+          <h3>Dynamic Karaoke Captions</h3>
+          <p>
+            High-contrast, kinetic animated subtitles styled after Alex Hormozi and MrBeast with word-by-word highlights.
+          </p>
+          <div class="mock-shorts-frame">
+            <div class="mock-caption-word">GAME-CHANGER!</div>
+          </div>
+        </div>
+
+        <!-- Feature 3: Smart Upload & Settings (6 cols) -->
+        <div class="bento-card col-6">
+          <div class="bento-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">🎛️</div>
+          <h3>Granular Video Settings & Scheduling</h3>
+          <p>
+            Choose exactly how your shorts are published. Force 1080p 60FPS, toggle comments on/off, set "Made for Kids" false, 
+            auto-generate SEO metadata, and schedule drip queues.
+          </p>
+        </div>
+
+        <!-- Feature 4: Hermes Conversational Copilot (6 cols) -->
+        <div class="bento-card col-6">
+          <div class="bento-icon" style="background: rgba(6, 182, 212, 0.15); color: #22d3ee;">💬</div>
+          <h3>Hermes AI Conversational Copilot</h3>
+          <p>
+            Never touch YAML configs again. Just talk to Hermes in plain English: <em>"Add @LexFridman to my clipping pool and post at 6 PM daily."</em>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Desktop App Installation (No Terminal Required) -->
+  <section class="install-section" id="install">
+    <div class="container">
+      <div class="install-hero-card">
+        <div class="install-grid">
+          <div class="install-info">
+            <span class="badge-tag tag-emerald">Zero-Terminal Installation</span>
+            <h2>Runs 100% on your laptop. Zero cloud fees.</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">
+              You don't need to know coding, git, or command lines. We package everything into a 1-click executable for Windows.
+            </p>
+
+            <div class="install-steps-list">
+              <div class="install-step-item">
+                <div class="step-num-badge">1</div>
+                <div class="step-details">
+                  <h4>Download & Extract</h4>
+                  <p>Download the free portable zip package to your Windows PC.</p>
+                </div>
+              </div>
+              <div class="install-step-item">
+                <div class="step-num-badge">2</div>
+                <div class="step-details">
+                  <h4>Double-Click "Start-JAGY.bat"</h4>
+                  <p>It automatically starts the local engine and checks dependencies silently.</p>
+                </div>
+              </div>
+              <div class="install-step-item">
+                <div class="step-num-badge">3</div>
+                <div class="step-details">
+                  <h4>Hermes AI Welcomes You</h4>
+                  <p>Your browser opens to <code>localhost:8000</code> with the Hermes Copilot ready to configure your channels.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="install-box">
+            <div class="package-icon">💻</div>
+            <div class="package-title">JAGY Desktop for Windows</div>
+            <div class="package-meta">Version 2.0.4 · 64-bit · Windows 10/11 Compatible</div>
+
+            <div class="install-actions">
+              <a href="assets/jagy-desktop-v2.0.zip" download="jagy-desktop-v2.0.zip" class="btn btn-primary btn-glow" style="padding: 14px 20px;">
+                <span>Download Windows Package (.zip)</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </a>
+              <button class="btn btn-secondary" onclick="window.hermesChat.toggleModal(true)">
+                <span>Ask Hermes About Setup</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="section-head">
+        <span class="badge-tag tag-purple">Got Questions?</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-container">
+        <div class="faq-item">
+          <button class="faq-trigger">
+            <span>Is JAGY really 100% free with no monthly subscription?</span>
+            <span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes! JAGY runs entirely on your own computer. It connects directly to free-tier APIs (Google Gemini, yt-dlp, and local FFmpeg) so there are zero server costs or recurring fees.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger">
+            <span>Can I clip podcast channels and gaming streams?</span>
+            <span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes! JAGY is built specifically for podcasts, interviews, and long-form streams. The Gemini neural engine transcribes and scores moments to find compelling dialogues, debates, and punchlines.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger">
+            <span>How do I set my posting schedule and comments settings?</span>
+            <span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">
+            You can either set it in the visual web dashboard (on localhost:8000) or simply talk to Hermes: <em>"Turn comments on, upload in 1080p, and post twice a day at 12 PM and 7 PM."</em>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger">
+            <span>What about YouTube copyright and monetization?</span>
+            <span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">
+            JAGY automatically applies transformative editing (punchy fast-cuts, zoom pans, custom background blur, and synchronized subtitles). You also have the option to credit source channels automatically in the description.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-logo" style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+            <img src="assets/icon.png" alt="Jagy" style="width: 32px; height: 32px; object-fit: contain;">
+            <span class="logo-text" style="font-weight: 800; font-size: 20px; letter-spacing: -0.5px;">Jaggy</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14px; max-width: 320px;">
+            Autonomous AI Video Slicing & Syndication Engine. Convert long-form content into viral Shorts.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Product</h5>
+          <ul class="footer-links">
+            <li><a href="#how-it-works" class="footer-link">How It Works</a></li>
+            <li><a href="#features" class="footer-link">Features</a></li>
+            <li><a href="#install" class="footer-link">Desktop App</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Community</h5>
+          <ul class="footer-links">
+            <li><a href="https://github.com/Jagguleliya/Jaggy" target="_blank" class="footer-link">GitHub</a></li>
+            <li><a href="mailto:dayush0789@gmail.com" class="footer-link">Support & Inquiries</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul class="footer-links">
+            <li><a href="privacy.html" class="footer-link">Privacy Policy</a></li>
+            <li><a href="terms.html" class="footer-link">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 JAGY.in · Free & Open-Source Software.</span>
+        <span>Built for Autonomous Creators.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Hermes AI Trigger Button -->
+  <button id="agent-fab" class="agent-fab" title="Chat with Hermes AI">
+    <span>🤖</span>
+    <span>Ask Hermes Copilot</span>
+  </button>
+
+  <!-- Hermes AI Interactive Chat Drawer Modal -->
+  <div id="agent-modal" class="agent-modal">
+    <div class="agent-modal-header">
+      <div class="agent-profile">
+        <div class="agent-avatar">🤖</div>
+        <div class="agent-info">
+          <h4>Hermes AI Copilot</h4>
+          <span class="agent-status">● Ready to configure</span>
+        </div>
+      </div>
+      <button id="close-agent" class="close-agent-btn">&times;</button>
+    </div>
+
+    <div id="agent-messages" class="agent-chat-messages">
+      <div class="chat-bubble bubble-bot">
+        Hey creator! 👋 I am your <strong>Hermes AI Copilot</strong>. Tell me what channel you want to clip, ask about multi-platform publishing, or explore how to configure your schedule!
+      </div>
+      <div class="quick-prompts">
+        <button class="prompt-btn">🎯 Clip a channel</button>
+        <button class="prompt-btn">🌐 Multi-platform posting</button>
+        <button class="prompt-btn">⏰ Set upload schedule</button>
+        <button class="prompt-btn">⚙️ Comments & quality</button>
+      </div>
+    </div>
+
+    <div class="agent-chat-input-bar">
+      <input type="text" id="agent-input" class="agent-text-input" placeholder="Ask Hermes anything (e.g. 'Can I post to Instagram too?')...">
+      <button id="agent-send" class="agent-send-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modular Scripts -->
+  <script src="js/three-scene.js"></script>
+  <script src="js/agent-chat.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

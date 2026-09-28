@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy — JAGY AI Video Automation Engine</title>
+  <meta name="description" content="JAGY Privacy Policy. Learn about our 100% local-first data architecture, local token storage, and YouTube API compliance.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Three.js 3D Background -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <!-- Three.js 3D Background Canvas -->
+  <canvas id="three-bg"></canvas>
+
+  <!-- Navigation Bar -->
+  <header class="navbar scrolled" id="navbar">
+    <div class="container nav-wrapper">
+      <a href="index.html" class="brand-logo" style="display: flex; align-items: center; gap: 10px;">
+        <img src="assets/icon.png" alt="Jagy" style="width: 32px; height: 32px; object-fit: contain;">
+        <span class="logo-text" style="font-weight: 800; font-size: 20px; letter-spacing: -0.5px;">Jaggy</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html#how-it-works" class="nav-link">How It Works</a></li>
+        <li><a href="index.html#features" class="nav-link">Features</a></li>
+        <li><a href="terms.html" class="nav-link">Terms of Service</a></li>
+        <li><a href="privacy.html" class="nav-link active" style="color: var(--text-white);">Privacy Policy</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="index.html#install" class="btn btn-primary btn-glow">
+          <span>Download App</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Header -->
+  <section class="legal-hero">
+    <div class="container">
+      <div class="legal-badge">
+        <span>🛡️</span>
+        <span>Local-First Architecture Guarantee</span>
+      </div>
+      <h1 class="legal-title">Privacy Policy</h1>
+      <p class="legal-meta">
+        Last Updated: September 2026 · Effective Immediately for all JAGY Desktop Users & Site Visitors
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Layout -->
+  <div class="container">
+    <div class="legal-layout">
+
+      <!-- Navigation Sidebar / TOC -->
+      <aside class="legal-sidebar">
+        <div class="legal-toc-title">Table of Contents</div>
+        <ul class="legal-toc-list">
+          <li><a href="#overview" class="legal-toc-link">1. Overview & Philosophy</a></li>
+          <li><a href="#local-data" class="legal-toc-link">2. 100% Local Data Storage</a></li>
+          <li><a href="#youtube-api" class="legal-toc-link">3. YouTube API Services</a></li>
+          <li><a href="#ai-processing" class="legal-toc-link">4. AI Processing & Gemini API</a></li>
+          <li><a href="#third-party" class="legal-toc-link">5. Third-Party Integrations</a></li>
+          <li><a href="#telemetry" class="legal-toc-link">6. Zero Telemetry & Cookies</a></li>
+          <li><a href="#user-rights" class="legal-toc-link">7. Revocation & Token Control</a></li>
+          <li><a href="#contact" class="legal-toc-link">8. Contact & Compliance</a></li>
+        </ul>
+      </aside>
+
+      <!-- Main Legal Content -->
+      <main class="legal-content">
+
+        <!-- Highlight Callout -->
+        <div class="legal-highlight-box emerald">
+          <div class="legal-highlight-icon">🔒</div>
+          <div class="legal-highlight-text">
+            <strong>Your Privacy Summary:</strong> JAGY is designed with a strict <strong>local-first privacy architecture</strong>. All your OAuth credentials, channel configurations, API keys, downloaded videos, and rendered Shorts remain saved strictly on your local machine. We do not collect, transmit, or monetize any of your personal data.
+          </div>
+        </div>
+
+        <!-- Section 1 -->
+        <article class="legal-card" id="overview">
+          <h2><span class="section-num">01</span> Overview & Philosophy</h2>
+          <p>
+            At JAGY ("we", "our", or "the Project"), accessible at <strong>jagy.in</strong> and through the JAGY Desktop Application, we respect your privacy and are committed to protecting it. This Privacy Policy explains how data is handled when you use the JAGY desktop application, local server daemon, and web interface.
+          </p>
+          <p>
+            Because JAGY operates directly on your hardware as self-hosted local software, you maintain complete ownership and control over your digital footprint, credentials, and video assets at all times.
+          </p>
+        </article>
+
+        <!-- Section 2 -->
+        <article class="legal-card" id="local-data">
+          <h2><span class="section-num">02</span> 100% Local Data Storage</h2>
+          <p>
+            When you run JAGY on your computer, all configuration files, tokens, and temporary files are created locally inside your application directory:
+          </p>
+          <ul>
+            <li><strong>YouTube OAuth Tokens (token.json):</strong> Stored locally in your system's project folder to maintain authorization with your YouTube channel.</li>
+            <li><strong>Application Configurations (config.yaml):</strong> Channel target lists, upload schedules, video quality options, and optional custom API keys are saved locally.</li>
+            <li><strong>Video Media & Subtitles:</strong> Raw downloaded videos, audio transcripts, clipped segments, and exported MP4 vertical Shorts reside solely on your local hard drive.</li>
+          </ul>
+          <p>
+            None of these local files are ever uploaded or transmitted to any central JAGY server.
+          </p>
+        </article>
+
+        <!-- Section 3 -->
+        <article class="legal-card" id="youtube-api">
+          <h2><span class="section-num">03</span> YouTube API Services Disclosure</h2>
+          <p>
+            JAGY uses YouTube API Services to allow users to authenticate their YouTube accounts and upload generated video Shorts directly to their channels.
+          </p>
+          <p>
+            By using JAGY's YouTube upload features, you acknowledge and agree to be bound by:
+          </p>
+          <ul>
+            <li><a href="https://www.youtube.com/t/terms" target="_blank" style="color: var(--brand-cyan);">YouTube Terms of Service</a></li>
+            <li><a href="https://policies.google.com/privacy" target="_blank" style="color: var(--brand-cyan);">Google Privacy Policy</a></li>
+          </ul>
+
+          <div class="legal-highlight-box amber">
+            <div class="legal-highlight-icon">⚠️</div>
+            <div class="legal-highlight-text">
+              <strong>YouTube Data Handling:</strong> JAGY requests Google OAuth permissions (specifically <code>https://www.googleapis.com/auth/youtube.upload</code>) strictly to enable automated video publishing initiated by you. JAGY does not access your private videos, reading history, or personal profile data beyond what is necessary to upload your authorized Shorts.
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 4 -->
+        <article class="legal-card" id="ai-processing">
+          <h2><span class="section-num">04</span> AI Processing & Gemini API</h2>
+          <p>
+            To identify viral moments and analyze transcripts, JAGY communicates with Google Gemini API services.
+          </p>
+          <p>
+            During moment extraction:
+          </p>
+          <ul>
+            <li>Only video transcripts, dialogue text, and timing metadata are transmitted to the Gemini API endpoint.</li>
+            <li>No personally identifiable information (PII) or user credentials are sent to AI processing services.</li>
+            <li>Users may choose to use JAGY's bundled built-in API keys or supply their own custom Google AI Studio key.</li>
+          </ul>
+        </article>
+
+        <!-- Section 5 -->
+        <article class="legal-card" id="third-party">
+          <h2><span class="section-num">05</span> Third-Party Integrations</h2>
+          <p>
+            If you enable optional multi-platform syndication (such as Instagram Reels, X/Twitter, or Reddit), JAGY uses official platform APIs or user-configured webhook tokens. Data transmitted to these platforms is strictly governed by their respective privacy policies:
+          </p>
+          <ul>
+            <li><strong>Instagram / Meta Graph API:</strong> Subject to Meta's Privacy Policy.</li>
+            <li><strong>X (Twitter) API v2:</strong> Subject to X's Privacy Policy.</li>
+            <li><strong>Reddit API:</strong> Subject to Reddit's Data and Privacy Terms.</li>
+            <li><strong>Pexels API:</strong> Used for optional royalty-free background B-roll media.</li>
+          </ul>
+        </article>
+
+        <!-- Section 6 -->
+        <article class="legal-card" id="telemetry">
+          <h2><span class="section-num">06</span> Zero Telemetry & Cookies</h2>
+          <p>
+            We believe software should not track you.
+          </p>
+          <ul>
+            <li><strong>No Cookies:</strong> The JAGY public website (jagy.in) does not place tracking cookies or advertising pixels on your browser.</li>
+            <li><strong>No Analytics Telemetry:</strong> The JAGY Desktop software contains zero phone-home tracking, usage analytics, or background telemetry.</li>
+            <li><strong>No Data Sales:</strong> We do not sell, trade, or monetize your usage data, video content, or channel activity.</li>
+          </ul>
+        </article>
+
+        <!-- Section 7 -->
+        <article class="legal-card" id="user-rights">
+          <h2><span class="section-num">07</span> User Revocation & Control</h2>
+          <p>
+            You retain full authority to revoke JAGY's access to your YouTube channel or API services at any time:
+          </p>
+          <ul>
+            <li><strong>Local Token Revocation:</strong> Delete the <code>config/token.json</code> file on your computer to immediately sign out.</li>
+            <li><strong>Google Account Permissions:</strong> Revoke JAGY's OAuth access anytime via the <a href="https://security.google.com/settings/security/permissions" target="_blank" style="color: var(--brand-cyan);">Google Security Settings Page</a>.</li>
+            <li><strong>Complete Data Removal:</strong> Simply delete the JAGY application folder to remove all local logs, configurations, and video assets permanently.</li>
+          </ul>
+        </article>
+
+        <!-- Section 8 -->
+        <article class="legal-card" id="contact">
+          <h2><span class="section-num">08</span> Contact & Compliance Inquiries</h2>
+          <p>
+            If you have questions regarding this Privacy Policy or data privacy compliance, please reach out to our project team:
+          </p>
+          <ul>
+            <li><strong>Email:</strong> <a href="mailto:dayush0789@gmail.com" style="color: var(--brand-cyan);">dayush0789@gmail.com</a></li>
+            <li><strong>GitHub Repository:</strong> <a href="https://github.com/dayush0789/jagy" target="_blank" style="color: var(--brand-cyan);">github.com/dayush0789/jagy</a></li>
+          </ul>
+        </article>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-logo" style="margin-bottom: 12px;">
+            <div class="logo-badge">⚡</div>
+            <span class="logo-text">JAGY</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 14px; max-width: 320px;">
+            Autonomous AI Video Slicing & Syndication Engine. Convert long-form content into viral Shorts.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Product</h5>
+          <ul class="footer-links">
+            <li><a href="index.html#how-it-works" class="footer-link">How It Works</a></li>
+            <li><a href="index.html#features" class="footer-link">Features</a></li>
+            <li><a href="index.html#install" class="footer-link">Desktop App</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Community</h5>
+          <ul class="footer-links">
+            <li><a href="https://github.com/dayush0789/jagy" target="_blank" class="footer-link">GitHub</a></li>
+            <li><a href="mailto:dayush0789@gmail.com" class="footer-link">Support & Inquiries</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul class="footer-links">
+            <li><a href="privacy.html" class="footer-link">Privacy Policy</a></li>
+            <li><a href="terms.html" class="footer-link">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 JAGY.in · Free & Open-Source Software.</span>
+        <span>Built for Autonomous Creators.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Background Script -->
+  <script src="js/three-scene.js"></script>
+
+</body>
+</html>
