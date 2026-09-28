@@ -1,17 +1,3 @@
 {
-  "version": 2,
-  "public": true,
-  "name": "jagy-website",
-  "builds": [
-    {
-      "src": "site/**/*",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/site/$1"
-    }
-  ]
+  "cleanUrls": true
 }
